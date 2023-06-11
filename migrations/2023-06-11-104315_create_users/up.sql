@@ -1,0 +1,6 @@
+-- Your SQL goes here
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(24) NOT NULL,
+  email TEXT UNIQUE NOT NULL
+)
