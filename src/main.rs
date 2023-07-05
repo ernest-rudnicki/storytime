@@ -1,3 +1,5 @@
+use std::env;
+
 use actix_web::{ App, HttpServer, web};
 use db::{create_pool};
 

@@ -5,6 +5,10 @@ diesel::table! {
         id -> Int4,
         #[max_length = 24]
         name -> Varchar,
-        email -> Text,
+        #[max_length = 100]
+        email -> Varchar,
+        #[max_length = 24]
+        password -> Varchar,
+        created_at -> Timestamp,
     }
 }

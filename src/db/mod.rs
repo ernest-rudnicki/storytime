@@ -4,6 +4,7 @@ use dotenvy::dotenv;
 use diesel::r2d2::{ConnectionManager, Pool};
 
 pub type PostgresPool = Pool<ConnectionManager<PgConnection>>;
+pub type DbError = Box<dyn std::error::Error + Send + Sync>;
 
 pub fn create_pool() -> PostgresPool{
     dotenv().ok();

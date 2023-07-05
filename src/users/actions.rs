@@ -1,12 +1,14 @@
 use actix_web::web;
 use diesel::{PgConnection, RunQueryDsl};
 
-use crate::models::user::CreateUser;
+use crate::{models::user::CreateUser, db::DbError};
 
-pub fn create(conn: &mut PgConnection, user_data: web::Json<CreateUser>) -> Result<usize, diesel::result::Error> {
+pub fn create(conn: &mut PgConnection, user_data: web::Json<CreateUser>) -> Result<usize, DbError> {
     use crate::schema::users;
 
-    diesel::insert_into(users::table)
+    let res = diesel::insert_into(users::table)
     .values(user_data.into_inner())
-    .execute(conn)
+    .execute(conn)?;
+
+    Ok(res)
 }
