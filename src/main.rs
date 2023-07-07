@@ -1,11 +1,10 @@
-use std::env;
-
 use actix_web::{ App, HttpServer, web};
 use db::{create_pool};
 
 mod users;
 mod models;
 mod db;
+mod utils;
 mod schema;
 
 #[actix_web::main]

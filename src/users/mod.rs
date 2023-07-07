@@ -2,7 +2,7 @@
 use actix_web::{ get, Responder, Result, web, Scope, post, HttpResponse, Error, error::ErrorInternalServerError };
 use validator::Validate;
 
-use crate::{models::user::{CreateUser}, db::PostgresPool, users::actions::create};
+use crate::{models::user::{CreateUser}, db::PostgresPool, utils::IdParams, users::actions::{get_action, create_action}};
 
 mod actions;
 
@@ -12,9 +12,23 @@ pub fn get_scope() -> Scope {
         .service(create_user)
 }
 
-#[get("")]
-async fn get_user() -> Result<impl Responder> {
-    Ok(web::Json("Hello world"))
+#[get("/{id}")]
+async fn get_user(pool: web::Data<PostgresPool>, params: web::Path<IdParams>) -> Result<impl Responder> {
+    
+    match params.id {
+        Some(id) =>  {
+            let user;
+
+            user = web::block(move || {
+                let mut conn = pool.get()?;
+                
+                get_action(&mut conn, &id)
+            }).await?.map_err(ErrorInternalServerError)?;
+        
+            Ok(HttpResponse::Ok().json(user))
+        },
+        None => return Ok(HttpResponse::BadRequest().body("User id is required")),
+    }
 }
 
 #[post("")]
@@ -28,11 +42,10 @@ async fn create_user(pool: web::Data<PostgresPool>, user_data: web::Json<CreateU
     web::block(move || {
         let mut conn = pool.get()?;
 
-        create(&mut conn, user_data)
+        create_action(&mut conn, user_data)
     }).await?
     .map_err(ErrorInternalServerError)?;
  
 
     Ok(HttpResponse::Created().body("User created"))
-
 }

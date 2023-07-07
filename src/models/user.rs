@@ -1,6 +1,9 @@
-use diesel::{Insertable};
-use serde::{Deserialize};
+use chrono::NaiveDateTime;
+use diesel::{Insertable, Selectable, Queryable};
+use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 use validator::Validate;
+
 
 use crate::{schema::users};
 
@@ -13,4 +16,14 @@ pub struct CreateUser {
     pub email: String,
     #[validate(length(min = 8, max = 24, message = "Name must be between 8 and 24 characters"))]
     pub password: String,
+}
+
+#[derive(Serialize, Queryable, Selectable)]
+#[diesel(table_name = users)]
+pub struct User {
+    pub id: Uuid,
+    pub name: String,
+    pub email: String,
+    pub password: String,
+    pub created_at: NaiveDateTime,
 }
