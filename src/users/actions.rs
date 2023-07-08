@@ -21,3 +21,12 @@ pub fn get_action(conn: &mut PgConnection, user_id: &Uuid) -> Result<User, DbErr
 
     Ok(res)
 }
+
+pub fn get_multiple_action(conn: &mut PgConnection, limit: i64, offset: i64) -> Result<Vec<User>, DbError> {
+    use crate::schema::users::dsl::*;
+
+    let res = users.select(User::as_select()).order(created_at.desc()).limit(limit).offset(offset).load(conn)?;
+
+    Ok(res)
+
+}
