@@ -1,6 +1,7 @@
 use actix_web::web;
 use diesel::{PgConnection, RunQueryDsl, ExpressionMethods, QueryDsl, SelectableHelper};
 use uuid::Uuid;
+use diesel::OptionalExtension;
 
 use crate::{models::user::{CreateUser, User}, db::DbError};
 
@@ -14,10 +15,10 @@ pub fn create_action(conn: &mut PgConnection, user_data: web::Json<CreateUser>) 
     Ok(res)
 }
 
-pub fn get_action(conn: &mut PgConnection, user_id: &Uuid) -> Result<User, DbError> {
+pub fn get_action(conn: &mut PgConnection, user_id: &Uuid) -> Result<Option<User>, DbError> {
     use crate::schema::users::dsl::*;
 
-    let res = users.filter(id.eq(user_id)).select(User::as_select()).first(conn)?;
+    let res = users.filter(id.eq(user_id)).select(User::as_select()).first(conn).optional()?;
 
     Ok(res)
 }

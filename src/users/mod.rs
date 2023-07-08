@@ -29,10 +29,13 @@ async fn get_user(pool: web::Data<PostgresPool>, params: web::Path<IdPathParams>
                 
                 get_action(&mut conn, &id)
             }).await?.map_err(ErrorInternalServerError)?;
-        
-            Ok(HttpResponse::Ok().json(user))
+
+            match user {
+                Some(user) => Ok(HttpResponse::Ok().json(user)),
+                None => Ok(HttpResponse::NotFound().body("User not found")),
+            }
         },
-        None => return Ok(HttpResponse::BadRequest().body("User id is required")),
+        None => Ok(HttpResponse::BadRequest().body("User id is required")),
     }
 }
 
