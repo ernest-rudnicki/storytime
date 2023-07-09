@@ -18,7 +18,7 @@ pub fn create_action(conn: &mut PgConnection, user_data: web::Json<CreateUser>) 
 pub fn get_action(conn: &mut PgConnection, user_id: &Uuid) -> Result<Option<User>, DbError> {
     use crate::schema::users::dsl::*;
 
-    let res = users.filter(id.eq(user_id)).select(User::as_select()).first(conn).optional()?;
+    let res = users.find(user_id).select(User::as_select()).first(conn).optional()?;
 
     Ok(res)
 }
